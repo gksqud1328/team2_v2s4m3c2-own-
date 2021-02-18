@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper 
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.news.NewsDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.news.NewsDAOInter">
+  
+  <insert id="create" parameterType="NewsVO">
+   INSERT INTO news(news_no, newsgrp_no, news_head, news_content, news_count, news_date, news_passwd, file1, thumb1, size1)
+   VALUES(news_seq.nextval, #{newsgrp_no}, #{news_head}, #{news_content}, 0, sysdate, #{news_passwd}, #{file1}, #{thumb1}, #{size1})  
+  </insert>   
+  
+  <!-- 모든 그룹 모든 글 목록 --> 
+  <select id="list_all" resultType="NewsVO">
+    SELECT news_no, newsgrp_no, news_head, news_content, news_count, news_date, news_passwd
+    FROM news 
+    ORDER BY news_no DESC    
+  </select>
+  
+  <!-- 특정 그룹 모든 글 목록(목록형) --> 
+  <select id="list" resultType="NewsVO" parameterType="int">
+    SELECT news_no, newsgrp_no,  news_head, news_content, news_comment, news_count, news_date, news_passwd, file1, thumb1, size1
+    FROM news 
+    WHERE newsgrp_no = #{news_no}
+    ORDER BY news_no ASC
+  </select>
+  
+   <!-- 특정 그룹 모든 글 목록(갤러리형) --> 
+  <select id="list_by_newsgrp_no" resultType="NewsVO" parameterType="int">
+    SELECT news_no, newsgrp_no,  news_head, news_content, news_comment, news_count, news_date, news_passwd, file1, thumb1, size1
+    FROM news 
+    WHERE newsgrp_no = #{news_no}
+    ORDER BY news_no ASC
+  </select>
+  
+  <!-- 조회 id:read, 입력: news_no, 리턴: NewsVO -->
+  <select id="read" resultType="NewsVO" parameterType="int">
+    SELECT news_no, newsgrp_no,  news_head, news_content, news_comment, news_count, news_date, news_passwd, file1, thumb1, size1
+    FROM news
+    WHERE news_no = #{news_no}
+  </select> 
+  
+  <!-- 수정, id: update, 입력: newsVO, 리턴: int -->
+  <update id="update" parameterType="NewsVO">
+   UPDATE news
+   SET news_head=#{news_head}, news_content=#{news_content}
+   WHERE news_no=#{news_no}
+  </update>
+  
+   <!-- 삭제, return: int -->
+  <delete id="delete" parameterType="int">
+   DELETE FROM news
+   WHERE news_no=#{news_no}
+  </delete>  
+  
+  <!-- 패스워드 검사, return: int -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(*) as passwd_cnt
+    FROM news
+    WHERE news_no=#{news_no} AND news_passwd=#{news_passwd}
+  </select>
+  
+  <!-- 첨부 파일 메인 이미지 변경 -->
+  <update id="update_img" parameterType="NewsVO">
+    UPDATE news
+    SET file1=#{file1}, thumb1=#{thumb1}, size1=#{size1}
+    WHERE news_no=#{news_no} 
+  </update> 
+  
+  <!-- 조회수 증가 -->
+  <update id="update_count" parameterType="int">
+    UPDATE news
+    SET news_count = news_count + 1
+    WHERE news_no=#{news_no}
+  </update> 
+</mapper>

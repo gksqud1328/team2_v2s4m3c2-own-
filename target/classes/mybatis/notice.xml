@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.cate.CateDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.notice.NoticeDAOInter">
+  <!-- 
+  insert: INSERT SQL 실행
+  id: Spring에서 호출시 사용
+  parameterType: 전달받는 데이터 객체의 타입
+  return: 등록한 레코드 갯수 리턴
+  SQL선언시 ';'은 삭제
+  #{}: ? 동일
+  #{name}: public String getName() 자동 호출
+   --> 
+  <insert id="create" parameterType="NoticeVO">
+   INSERT INTO notice(noticeno, seqno, head, content, passwd, rdate)
+   VALUES(notice_seq.nextval, #{seqno}, #{head}, #{content},#{passwd}, sysdate)
+  </insert> 
+   
+  <!-- 
+  레코드 갯수 만큼 NoticeVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<NoticeVO> list = new ArrayList<NoticeVO>(); 
+  -->
+  <select id="list" resultType="NoticeVO">
+    SELECT noticeno, seqno, head, content, count, visible, rdate 
+    FROM notice
+    ORDER BY noticeno ASC
+  </select>
+  
+  <!-- 조회 id:read, 입력: noticeno, 리턴: NoticeVO -->
+  <select id="read" parameterType="int" resultType="NoticeVO">
+    SELECT noticeno, seqno, head, content, rdate, count, passwd
+    FROM notice
+    WHERE noticeno=#{noticeno}
+  </select>
+  
+  <!-- 수정, id: update, 입력: NoticeVO, 리턴: int -->
+  <update id="update" parameterType="NoticeVO">
+    UPDATE notice
+    SET head=#{head}, content = #{content}, seqno=#{seqno}
+    WHERE noticeno = #{noticeno}
+  </update>
+   
+  <!-- 삭제, return: int -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM notice
+    WHERE noticeno = #{noticeno}
+  </delete>  
+   
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(*) as passwd_cnt
+    FROM notice
+    WHERE noticeno=#{noticeno} AND passwd=#{passwd}
+  </select>
+  
+  <!-- 우선순위 상향 up 1 ◁ 10 -->
+  <update id="update_noticeno_up" parameterType="int">
+    UPDATE notice
+    SET seqno = seqno - 1
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+  <!-- 우선순위 하향 down 1 ▷ 10 -->
+  <update id="update_noticeno_down" parameterType="int">
+    UPDATE notice
+    SET seqno = seqno + 1
+    WHERE noticeno = #{noticeno}
+  </update>
+  
+  <!-- 출력모드 변경, id: update_visible, 입력: NoticeVO, 리턴: int -->
+  <update id="update_visible" parameterType="NoticeVO">
+    UPDATE notice
+    SET visible=#{visible}
+    WHERE noticeno=#{noticeno}
+  </update>
+  
+  <!-- 조회수, id: update_count, 입력: int -->
+  <update id="update_count" parameterType="int">
+    UPDATE notice
+    SET count = count + 1
+    WHERE noticeno=#{noticeno}
+  </update>
+</mapper>
+
+
+
+
+

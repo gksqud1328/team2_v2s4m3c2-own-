@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.newsgrp.NewsgrpDAOInter">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="newsgrpVO">
+    INSERT INTO newsgrp(newsgrp_no, newsgrp_head, newsgrp_seqno, newsgrp_date)
+    VALUES(newsgrp_seq.nextval, #{newsgrp_head}, #{newsgrp_seqno}, sysdate)
+  </insert> 
+  
+   <!-- 
+  레코드 갯수 만큼 CategrpVO 객체를 만들어 ArrayList에 저장하여 리턴,
+  List<CategrpVO> list = new ArrayList<CategrpVO>(); 
+  -->
+  <select id="list_newsgrp_no_asc" resultType="newsgrpVO">
+    SELECT newsgrp_no, newsgrp_head, newsgrp_seqno, newsgrp_date
+    FROM newsgrp
+    ORDER BY newsgrp_no ASC
+  </select>
+  
+  <!-- 조회, 수정폼, 삭제폼, id: read, 입력: newsgrp_no 리턴: NewsgrpVO-->
+  <select id="read" parameterType="int" resultType="newsgrpVO">
+    SELECT newsgrp_no, newsgrp_head, newsgrp_seqno, newsgrp_date
+    FROM newsgrp
+    WHERE newsgrp_no=#{newsgrp_no}
+  </select>
+  
+   <!-- 수정 -->
+  <update id="update" parameterType="newsgrpVO">
+    UPDATE newsgrp
+    SET newsgrp_head=#{newsgrp_head}, newsgrp_seqno=#{newsgrp_seqno}
+    WHERE newsgrp_no=#{newsgrp_no}
+  </update>
+    
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM newsgrp
+    WHERE newsgrp_no=#{newsgrp_no}
+  </delete>
+  
+  <!-- 그룹 순서 목록 -->
+  <select id="list_newsgrp_seqno_asc" resultType="newsgrpVO">
+    SELECT newsgrp_no, newsgrp_head, newsgrp_seqno, newsgrp_date
+    FROM newsgrp
+    ORDER BY newsgrp_seqno ASC
+  </select>
+  
+ <!-- 우선순위 상향 up 10 ▷ 1 -->
+  <update id="update_newsgrp_seqno_up" parameterType="int">
+    UPDATE newsgrp
+    SET newsgrp_seqno = newsgrp_seqno - 1
+    WHERE newsgrp_no = #{newsgrp_no}
+  </update>
+  
+ <!-- 우선순위 하향 down 1 ▷ 10 -->
+ <update id="update_newsgrp_seqno_down" parameterType="int">
+    UPDATE newsgrp
+    SET newsgrp_seqno = newsgrp_seqno + 1
+    WHERE newsgrp_no = #{newsgrp_no}
+ </update>
+ 
+</mapper>

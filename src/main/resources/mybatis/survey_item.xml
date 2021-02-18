@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+<!-- dev.mvc.news.NewsDAOInter 패키지에 등록된 interface 명시,
+      패키지명과 인터페이스명은 실제로 존재해야함,
+      Spring이 내부적으로 자동으로 interface를 구현해줌. -->
+<mapper namespace="dev.mvc.survey_item.Survey_itemDAOInter">
+ 
+  <insert id="create" parameterType="Survey_itemVO">
+   INSERT INTO survey_item(item_no, survey_no, item, item_count)
+   VALUES(item_seq.nextval, #{survey_no}, #{item}, 0)
+  </insert> 
+  
+</mapper>

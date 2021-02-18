@@ -1,0 +1,98 @@
+DROP TABLE news;
+
+CREATE TABLE news(
+news_no        NUMBER(10)   NOT NULL             PRIMARY KEY,
+news_head      CLOB         DEFAULT '제목'       NOT NULL,
+news_content   CLOB         DEFAULT '내용'       NOT NULL,
+news_comment   CLOB         DEFAULT '댓글'       NOT NULL,
+news_count     NUMBER(10)   DEFAULT 0            NOT NULL,
+news_mode      CLOB         DEFAULT'Y'           NOT NULL,
+news_like      NUMBER(10)   DEFAULT 0            NOT NULL,
+news_passwd    VARCHAR(15)                       NOT NULL,
+file1          VARCHAR(100) NULL,
+thumb1         VARCHAR(100) NULL,
+size1          NUMBER(10)   DEFAULT 0 NULL,  
+news_date      DATE         NOT NULL
+);
+
+COMMENT ON TABLE news is '전통주 뉴스';
+COMMENT ON COLUMN news.news_head is '제목';
+COMMENT ON COLUMN news.news_content is '내용';
+COMMENT ON COLUMN news.news_comment is '댓글';
+COMMENT ON COLUMN news.news_count is '조회수';
+COMMENT ON COLUMN news.news_mode is '조회모드';
+COMMENT ON COLUMN news.news_like is '추천수';
+COMMENT ON COLUMN news.news_date is '등록일';
+COMMENT ON COLUMN news.news_passwd is '패스워드';
+COMMENT ON COLUMN news.file1 is '메인 이미지';
+COMMENT ON COLUMN news.thumb1 is '메인 이미지 Preview';
+COMMENT ON COLUMN news.size1 is ' 메인 이미지 크기';
+
+
+DROP SEQUENCE news_seq;
+-- create 등록
+CREATE SEQUENCE news_seq
+  START WITH 1        -- 시작 번호
+  INCREMENT BY 1      -- 증가값
+  MAXVALUE 9999999999 -- 최대값: 9999999 --> NUMBER(7) 대응
+  CACHE 2             -- 2번은 메모리에서만 계산
+  NOCYCLE;            -- 다시 1부터 생성되는 것을 방지
+
+INSERT INTO news(news_no, news_head, news_content, news_comment, news_like, news_date, news_passwd, file1, thumb1, size1)
+VALUES(news_seq.nextval, '개미는 뚠뚠..', '오늘도 뚠뚠', '일하자', 0, sysdate, '1234', '지평막걸리.jpg', '지평막걸리.jpg', 23657); 
+
+INSERT INTO news(news_no, news_head, news_content, news_comment, news_like, news_date, news_passwd, file1, thumb1, size1)
+VALUES(news_seq.nextval, '팀프로젝트2', 'ㅇㅅㅇ', 'ㅇㅅㅇ', 0, sysdate, '1234', '지평막걸리.jpg', '지평막걸리.jpg', 23657); 
+
+INSERT INTO news(news_no, news_head, news_content, news_comment, news_like, news_date, news_passwd, file1, thumb1, size1)
+VALUES(news_seq.nextval, '제목', '내용', '댓글', 2, sysdate, '1234', '지평막걸리.jpg', '지평막걸리.jpg', 23657); 
+
+SELECT * FROM news;
+
+COMMIT;
+
+-- list 목록
+SELECT news_no, news_head, news_content, news_count, news_date
+FROM news 
+ORDER BY news_no ASC; 
+
+-- read 조회
+SELECT news_no, news_head, news_content, news_comment, news_count, news_date
+FROM news
+WHERE news_no=3;
+
+--update 수정
+UPDATE news
+SET news_head='전통주 뉴스', news_content='전전통통주주'
+WHERE news_no=1;
+
+SELECT * FROM news;
+
+COMMIT;
+
+--delete 삭제
+DELETE news
+WHERE news_no=8;
+
+SELECT * FROM news;
+COMMIT;
+
+-- 패스워드 검사
+SELECT COUNT(*) as passwd_cnt
+FROM news
+WHERE news_no=3 AND news_passwd='1234';
+
+SELECT news_no, news_passwd
+FROM news 
+ORDER BY news_no DESC;
+
+-- 첨부 파일 변경(등록, 변경, 수정, 삭제)
+UPDATE news
+SET file1='file name', thumb1='thumb file name', size1=5000
+WHERE news_no=10; 
+  
+SELECT news_no, file1, thumb1, size1
+FROM news 
+ORDER BY news_no ASC; 
+
+COMMIT;

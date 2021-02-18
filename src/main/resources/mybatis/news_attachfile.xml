@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace = "dev.mvc.news_attachfile.News_AttachfileDAOInter">
+
+  <!-- 첨부파일 등록  -->
+  <insert id="create" parameterType="News_attachfileVO">
+    INSERT INTO news_attachfile(news_attachfile_no, news_no, news_attachfile_rname, news_attachfile_upname, news_attachfile_thumb, news_attachfile_size, news_attachfile_date)
+    VALUES(news_attachfile_seq.nextval, #{news_no}, #{news_attachfile_rname}, #{news_attachfile_upname}, #{news_attachfile_thumb}, #{news_attachfile_size}, sysdate)
+  </insert>
+  
+  <!-- 전체 목록 -->
+  <select id="list" resultType="News_attachfileVO">
+    SELECT news_attachfile_no, news_no, news_attachfile_rname, news_attachfile_upname, news_attachfile_thumb, news_attachfile_size, news_attachfile_date
+    FROM news_attachfile
+    ORDER BY news_no DESC,  news_attachfile_no ASC
+  </select>
+  
+  <!-- PK 기준 하나의 레코드 조회 -->
+  <select id="read" resultType="News_attachfileVO" parameterType="int">
+    SELECT news_attachfile_no, news_no, news_attachfile_rname, news_attachfile_upname, news_attachfile_thumb, news_attachfile_size, news_attachfile_date
+    FROM  news_attachfile
+    WHERE news_attachfile_no=#{news_attachfile_no}  
+  </select>
+
+  <!-- FK 기준 news_no가 동일한 레코드 조회, news_attachfile_rname 오름 차순 -->
+  <select id="list_by_news_no" resultType="News_attachfileVO" parameterType="int">
+    SELECT news_attachfile_no, news_no, news_attachfile_rname, news_attachfile_upname, news_attachfile_thumb, news_attachfile_size, news_attachfile_date
+    FROM  news_attachfile
+    WHERE news_no = #{news_no}
+  </select>
+  
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE FROM news_attachfile
+    WHERE news_attachfile_no = #{news_attachfile_no}    
+  </delete>
+  
+  <!-- FK 부모키를 이용한 모든 레코드 삭제 -->
+  <delete id="delete_by_news_no" parameterType="int">
+    DELETE FROM news_attachfile
+    WHERE news_no = #{news_no}
+  </delete>
+  
+  <!-- 부모키(news_no)별 갯수 산출 -->
+  <select id="count_by_news_no" parameterType="int" resultType="int">
+    SELECT COUNT(*) as cnt
+    FROM news_attachfile
+    WHERE news_no = #{news_no}
+  </select>
+
+
+      
+</mapper> 
